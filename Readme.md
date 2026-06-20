@@ -125,9 +125,7 @@ The performance of the guardrail models was evaluated primarily using the F1 sco
 
 The F1 score is defined as:
 
-\[
-F1 = 2 \cdot \frac{Precision \cdot Recall}{Precision + Recall}
-\]
+$$F1 = 2 \cdot \frac{Precision \cdot Recall}{Precision + Recall}$$
 
 Where:
 - **Precision** = TP / (TP + FP)  
