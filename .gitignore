@@ -1,0 +1,10 @@
+adapters/
+data_synthesis/
+in_scope_bin/
+in_scope_cat/
+*.py
+__pycache__/
+.env
+notes.md
+tmp/
+*.csv
