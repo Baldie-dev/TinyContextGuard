@@ -115,7 +115,9 @@ Some of the LoRA hyperparameters were determined by generating a heatmap compari
 
 ### FFT
 
+The optimal number of epochs was determined by evaluating model performance at each checkpoint and selecting the epoch at which validation performance plateaued, to mitigate overfitting.
 
+![fft_training_evolution]()
 
 ## Evaluation
 
