@@ -233,27 +233,22 @@ All models have been fine-tuned using PEFT (Parameter-Efficient Fine-Tuning) wit
 Training dataset consists of:
 - **Case: User's query in scope** (2000 questions, 50/50 split)
 
-### Loss function
+### A weighted token-level cross-entropy loss
 
 $$
-\mathcal{L}(\theta)
-=
+\mathcal{L}(\theta)=
 \frac{
-\displaystyle
-\sum_{t=1}^{T}
-\mathbf{1}[y_t \neq -100]\;
-w\;
-\bigl(-\log p_\theta(y_t \mid x_{<t})\bigr)
+\sum_{t=1}^{T} \mathbf{1}[y_t \neq -100] \cdot w \cdot \left(-\log \left(p_\theta(y_t \mid x_{\lt t})\right)\right)
 }{
-\displaystyle
 \sum_{t=1}^{T} \mathbf{1}[y_t \neq -100]
 }
 $$
 
-- $x_{1:T} be the tokenized full chat transcript  
-- $ y_{1:T} $ be the label sequence, where prompt tokens are masked with \(-100\)  
-- $ w $ be the per‑example scalar weight for negative cases
-- $ p_\theta(\cdot \mid x_{<t}) $ be the model’s next‑token distribution  
+
+- $x_{1:T}$ be the tokenized full chat transcript  
+- $y_{1:T}$ be the label sequence, where prompt tokens are masked with `-100`
+- $w$ be the per‑example scalar weight for negative cases
+- $p_\theta(\cdot \mid x_{<t})$ be the model’s next‑token distribution  
 
 ### False-Negative Punishments
 
