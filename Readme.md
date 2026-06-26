@@ -149,6 +149,10 @@ Mismatch: expected 'Out of Scope', got 'In Scope'
 
 ![f1_fp_per_weight](imgs/f1_fp_per_weight.png)
 
+Which did not made sense, and source code review found that weights has been silently ommited from dataset. Lesson learned: every customization should be verified by benchmark.
+
+![f1_fp_per_weight2.png](imgs/f1_fp_per_weight2.png)
+
 ## Guardrail: Is generated code/command harmfull
 
 # Approach
