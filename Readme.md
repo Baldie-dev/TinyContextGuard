@@ -5,16 +5,21 @@
 - LD‑MoLE — Learnable Dynamic Routing [https://arxiv.org/abs/2509.25684v2](https://arxiv.org/abs/2509.25684v2)
 - L-MoE: End-to-End Training of a Lightweight Mixture of Low-Rank Adaptation Experts [https://arxiv.org/html/2510.17898v1](https://arxiv.org/html/2510.17898v1)
 
-This project focuses on training very small generative models, ranging from 3B to 135M parameters, that serve as an additional guardrail layer for agentic AI systems.
+This project focuses on training very small generative models, ranging from 3B to 135M parameters, that serve defence in depth for agentic system.
+
+MoLE monitors context window and LLM interactions to flag potential issues.
+
+![MoLE.png](imgs/MoLE.png)
 
 ## Overview
 
 Following Guardrails has been tested
 - [G1] Is user's question in scope.
 - [G2] Is generated code/command harmfull.
-- [G3] Are external data harmfull.
-- [G4] Is model's answer aligned with code of conduct.
-- [G5] Is models' answer in scope.
+- [G3] Is chain-of-thoughts malicious?
+- [G4] Are external data harmfull.
+- [G5] Is model's answer aligned with code of conduct.
+- [G6] Is models' answer in scope.
 
 Used base models:
 | Author        | Model                          | Parameters |
