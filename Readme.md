@@ -312,3 +312,87 @@ False negatives were additionally tracked separately to measure cases where the 
 - L-MoE: End-to-End Training of a Lightweight Mixture of Low-Rank Adaptation Experts [https://arxiv.org/html/2510.17898v1](https://arxiv.org/html/2510.17898v1)
 - Mixture of LoRA Experts
  [https://arxiv.org/abs/2404.13628](https://arxiv.org/abs/2404.13628)
+
+
+# Misc Notes to include:
+
+- Lesson learned during training... make the code resumable at checkpoints.
+    - If you need to do different job, you can just exit
+    
+
+
+## General training stats
+loraEpochs = 0.1
+loraRank = 12
+negative_weight = 4
+batch_size = 2
+lr = 2e-4
+
+Model                                           VRAM Peak (MB)   Train Time (s)     Status
+------------------------------------------------------------------------------------------
+HuggingFaceTB/SmolLM2-135M-Instruct                        N/A           2246.8         ok
+HuggingFaceTB/SmolLM2-360M-Instruct                        N/A           2354.1         ok
+HuggingFaceTB/SmolLM2-1.7B-Instruct                        N/A           1568.7         ok
+Qwen/Qwen2.5-0.5B-Instruct                                 N/A           1805.9         ok
+Qwen/Qwen2.5-1.5B-Instruct                                 N/A           2082.3         ok
+meta-llama/Llama-3.2-1B-Instruct                           N/A           1165.9         ok
+meta-llama/Llama-3.2-3B-Instruct                           N/A          13640.9         ok
+google/gemma-3-270m-it                                     N/A           1852.8         ok
+google/gemma-3-1b-it                                       N/A           2506.8         ok
+
+
+Model                                           VRAM Peak (MB)   Train Time (s)     Status
+------------------------------------------------------------------------------------------
+HuggingFaceTB/SmolLM2-135M-Instruct                      490.1             72.9         ok
+HuggingFaceTB/SmolLM2-360M-Instruct                      956.7             72.4         ok
+HuggingFaceTB/SmolLM2-1.7B-Instruct                     3552.7             64.4         ok
+Qwen/Qwen2.5-0.5B-Instruct                              1536.8             58.9         ok
+Qwen/Qwen2.5-1.5B-Instruct                              3561.3             65.0         ok
+meta-llama/Llama-3.2-1B-Instruct                        2964.8             40.7         ok
+meta-llama/Llama-3.2-3B-Instruct                        6819.4             73.9         ok
+google/gemma-3-270m-it                                  1495.7             61.6         ok
+google/gemma-3-1b-it                                    2962.5             80.9         ok
+
+
+## Robustness against noise testing
+
+```
+can u tell me if the gateron milky yellows are in stock rn?
+can u tell me if the gatern milky yellows ae in stock rn?
+ca u telll me if the gateron milky yellows are in stock rn?
+can  u  tell  me  if  the  gateron  mioky  yellows  aree  in  stoock  rn?
+```
+
+Type of noise:
+- swap adjacent letters
+- drop a character
+- duplicate character
+- keyboard neighbor substitution
+
+Comparison of fine-tuned HuggingFaceTB/SmolLM2-135M-Instruct with normal train data:
+![noise_clean_data](imgs/chart1_clean.png)
+
+Now, the train data was duplicated and random noise level from 1x - 4x has been applied.
+![noise_noised_data](imgs/chart2_clean_vs_noised.png)
+
+
+## Multilingual testing
+
+How does this model performs if we feed it different language? German may be included in the pre-training.
+
+HuggingFaceTB/SmolLM2-135M-Instruct has disclaimer: "SmolLM2 models primarily understand and generate content in English.".
+So what happens if question is submited in German?
+What is the difference between model sizes?
+
+I have used google-t5/t5-3b to translate test data from english to german.
+![en_vs_de](imgs/chart_en_vs_de.png)
+
+Small model does not perform well on the different language.
+
+### Approach 1: German LoRA adapter
+
+-> Translate both train and test dataset into german
+
+### Approach 2: Use default English LoRA, but translate to user's query to English first
+
+-> this requires running 2 models in parallel
