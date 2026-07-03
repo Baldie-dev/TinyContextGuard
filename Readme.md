@@ -328,39 +328,27 @@ negative_weight = 4
 batch_size = 2
 lr = 2e-4
 
-Model                                           VRAM Peak (MB)   Train Time (s)     Status
-------------------------------------------------------------------------------------------
-HuggingFaceTB/SmolLM2-135M-Instruct                        N/A           2246.8         ok
-HuggingFaceTB/SmolLM2-360M-Instruct                        N/A           2354.1         ok
-HuggingFaceTB/SmolLM2-1.7B-Instruct                        N/A           1568.7         ok
-Qwen/Qwen2.5-0.5B-Instruct                                 N/A           1805.9         ok
-Qwen/Qwen2.5-1.5B-Instruct                                 N/A           2082.3         ok
-meta-llama/Llama-3.2-1B-Instruct                           N/A           1165.9         ok
-meta-llama/Llama-3.2-3B-Instruct                           N/A          13640.9         ok
-google/gemma-3-270m-it                                     N/A           1852.8         ok
-google/gemma-3-1b-it                                       N/A           2506.8         ok
-
-
-Model                                           VRAM Peak (MB)   Train Time (s)     Status
-------------------------------------------------------------------------------------------
-HuggingFaceTB/SmolLM2-135M-Instruct                      490.1             72.9         ok
-HuggingFaceTB/SmolLM2-360M-Instruct                      956.7             72.4         ok
-HuggingFaceTB/SmolLM2-1.7B-Instruct                     3552.7             64.4         ok
-Qwen/Qwen2.5-0.5B-Instruct                              1536.8             58.9         ok
-Qwen/Qwen2.5-1.5B-Instruct                              3561.3             65.0         ok
-meta-llama/Llama-3.2-1B-Instruct                        2964.8             40.7         ok
-meta-llama/Llama-3.2-3B-Instruct                        6819.4             73.9         ok
-google/gemma-3-270m-it                                  1495.7             61.6         ok
-google/gemma-3-1b-it                                    2962.5             80.9         ok
+| Model | VRAM Peak (MB) | Train Time (s) | Status |
+|-------|---------------:|---------------:|:------:|
+| HuggingFaceTB/SmolLM2-135M-Instruct | 490.1 | 2246.8 | ✅ |
+| HuggingFaceTB/SmolLM2-360M-Instruct | 956.7 | 2354.1 | ✅ |
+| HuggingFaceTB/SmolLM2-1.7B-Instruct | 3552.7 | 1568.7 | ✅ |
+| Qwen/Qwen2.5-0.5B-Instruct | 1536.8 | 1805.9 | ✅ |
+| Qwen/Qwen2.5-1.5B-Instruct | 3561.3 | 2082.3 | ✅ |
+| meta-llama/Llama-3.2-1B-Instruct | 2964.8 | 1165.9 | ✅ |
+| meta-llama/Llama-3.2-3B-Instruct | 6819.4 | 13640.9 | ✅ |
+| google/gemma-3-270m-it | 1495.7 | 1852.8 | ✅ |
+| google/gemma-3-1b-it | 2962.5 | 2506.8 | ✅ |
 
 
 ## Robustness against noise testing
 
+Examples of the noise levels:
 ```
-can u tell me if the gateron milky yellows are in stock rn?
-can u tell me if the gatern milky yellows ae in stock rn?
-ca u telll me if the gateron milky yellows are in stock rn?
-can  u  tell  me  if  the  gateron  mioky  yellows  aree  in  stoock  rn?
+0x - can u tell me if the gateron milky yellows are in stock rn?
+2x - can u tell me if the gatern milky yellows ae in stock rn?
+4x - can u tell me if th gateron mioky yellows aree in stoock r?
+6x - cam u telll m if the gsteron miilky yelows are in stock r?
 ```
 
 Type of noise:
@@ -375,6 +363,11 @@ Comparison of fine-tuned HuggingFaceTB/SmolLM2-135M-Instruct with normal train d
 Now, the train data was duplicated and random noise level from 1x - 4x has been applied.
 ![noise_noised_data](imgs/chart2_clean_vs_noised.png)
 
+Does model size matter? 
+![noise_model_comparison_clean_data](imgs/chart_noise_by_model_size.png)
+
+And how about performance when we train them also on noisy data:
+![noise_model_comparison_noisy_data](imgs/chart_noise_by_model_size_noisy.png)
 
 ## Multilingual testing
 
@@ -384,8 +377,8 @@ HuggingFaceTB/SmolLM2-135M-Instruct has disclaimer: "SmolLM2 models primarily un
 So what happens if question is submited in German?
 What is the difference between model sizes?
 
-I have used google-t5/t5-3b to translate test data from english to german.
-![en_vs_de](imgs/chart_en_vs_de.png)
+I have used google-t5/t5-3b to translate test data from english to german, french and romanian:
+![en_vs_de](imgs/chart_en_vs_defrro.png)
 
 Small model does not perform well on the different language.
 
