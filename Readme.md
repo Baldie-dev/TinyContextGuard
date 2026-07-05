@@ -227,13 +227,7 @@ Additionally, I was curious whether it is possible to overtrain the `HuggingFace
 Full‑Parameter Fine‑Tuning was attempted for the smallest model `HuggingFaceTB/SmolLM2-135M-Instruct` to measure if it can perform better than just training it via LoRA:
 
 100 epoch, with `batch_size=10` consumed 10GB of VRAM and took 5 hours.
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-UPDATE THIS CHART
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-![fft_training_evolution](imgs/FFT_In_Scope_F1_Evolution.png)
+![fft_training_evolution](imgs/fft_f1_by_epoch.png)
 
 However, the performance,.... as seen in the heatmap above.
 
@@ -243,28 +237,25 @@ The following table provides a summary of the training resource consumption, com
 
 | Hyperparameter | Value |
 |----------------|-------|
-| LoRA Epochs    | 0.1   |
+| LoRA Epochs    | 1     |
 | LoRA Rank      | 12    |
 | Negative Weight| 4     |
 | Batch Size     | 2     |
 | Learning Rate  | 2e-4  |
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-UPDATE THIS TABLE
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-| Model | VRAM Peak (MB) | Train Time (s) | Status |
-|-------|---------------:|---------------:|:------:|
-| HuggingFaceTB/SmolLM2-135M-Instruct | 490.1 | 2246.8 | ✅ |
-| HuggingFaceTB/SmolLM2-360M-Instruct | 956.7 | 2354.1 | ✅ |
-| HuggingFaceTB/SmolLM2-1.7B-Instruct | 3552.7 | 1568.7 | ✅ |
-| Qwen/Qwen2.5-0.5B-Instruct | 1536.8 | 1805.9 | ✅ |
-| Qwen/Qwen2.5-1.5B-Instruct | 3561.3 | 2082.3 | ✅ |
-| meta-llama/Llama-3.2-1B-Instruct | 2964.8 | 1165.9 | ✅ |
-| meta-llama/Llama-3.2-3B-Instruct | 6819.4 | 13640.9 | ✅ |
-| google/gemma-3-270m-it | 1495.7 | 1852.8 | ✅ |
-| google/gemma-3-1b-it | 2962.5 | 2506.8 | ✅ |
+| Model                                 | VRAM Peak (MB) | Train Time (s) |
+| ------------------------------------- | -------------: | -------------: |
+| `HuggingFaceTB/SmolLM2-135M-Instruct` |          508   |          480   |
+| `HuggingFaceTB/SmolLM2-360M-Instruct` |          975   |          522   |
+| `HuggingFaceTB/SmolLM2-1.7B-Instruct` |         3577   |          357   |
+| `Qwen/Qwen2.5-0.5B-Instruct`          |         1589   |          399   |
+| `Qwen/Qwen2.5-1.5B-Instruct`          |         3614   |          474   |
+| `meta-llama/Llama-3.2-1B-Instruct`    |         3007   |          258   |
+| `meta-llama/Llama-3.2-3B-Instruct`    |         6862   |          460   |
+| `google/gemma-3-270m-it`              |         1616   |          372   |
+| `google/gemma-3-1b-it`                |         3084   |          507   |
+
+Surprisingly, the training time is very similar across all models. However, for smaller models such as the 135M model, the batch size can be increased to 10, reducing the training time to approximately 60s per epoch for the price of increasing VRAM requirement to `~8GB`.
 
 # Evaluation
 
@@ -289,6 +280,23 @@ In addition to the F1 score, the number of **False Positives** was tracked separ
 
 # Results
 
+## Inference Requirements
+
+The table below summarizes the VRAM requirements and inference speed of each model.
+
+| Model                                 | VRAM Peak (MB) | Total Time (s) | Avg/Sample (s) |
+| ------------------------------------- | -------------: | -------------: | -------------: |
+| `HuggingFaceTB/SmolLM2-135M-Instruct` |          268.9 |          662.0 |          0.599 |
+| `HuggingFaceTB/SmolLM2-360M-Instruct` |          705.9 |          701.3 |          0.635 |
+| `HuggingFaceTB/SmolLM2-1.7B-Instruct` |         3295.2 |          407.4 |          0.369 |
+| `Qwen/Qwen2.5-0.5B-Instruct`          |          954.8 |          590.6 |          0.535 |
+| `Qwen/Qwen2.5-1.5B-Instruct`          |         2961.3 |          683.2 |          0.618 |
+| `meta-llama/Llama-3.2-1B-Instruct`    |         2376.9 |          391.8 |          0.355 |
+| `meta-llama/Llama-3.2-3B-Instruct`    |         6157.0 |          660.1 |          0.597 |
+| `google/gemma-3-270m-it`              |          524.3 |          698.3 |          0.632 |
+| `google/gemma-3-1b-it`                |         1920.9 |         1074.7 |          0.973 |
+
+
 ## Baseline Results:
 
 | Model                 |   F1 | FP |
@@ -301,12 +309,13 @@ In addition to the F1 score, the number of **False Positives** was tracked separ
 - *Note2: DeepSeek did not fully followed prompt and did not produced expected response*
 
 ## Preliminary results:
-
+```
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-This needs to be updated with new dataset
+python main_local.py --gpu
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+```
 | Model                               |   Base     |   LoRA | FP |
 |:------------------------------------|-----------:|-------:|---:|
 | HuggingFaceTB/SmolLM2-1.7B-Instruct |      66.67 |  99.44 |  1 |
@@ -325,9 +334,10 @@ This needs to be updated with new dataset
 
 I was wondering whether a system prompt is necessary for a single-purpose LoRA adapter, so I ran training and benchmarking under three setups: a full system prompt, a redacted system prompt, and no system prompt at all. The goal was to evaluate whether the system prompt could be simplified or removed to speed up inference.
 
+30 epoch training run:
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-Add comparison here
+python System_prompt_check.py --gpu
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
