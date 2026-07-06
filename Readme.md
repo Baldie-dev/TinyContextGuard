@@ -182,7 +182,7 @@ For the LoRA-tuned models, adapters were attached to the key attention projectio
 
 ## A Weighted Token-Level Cross-Entropy Loss
 
-To train the models, I employed a modified cross-entropy loss function that applies per-example scalar weights. This allows the trainer to dynamically scale the loss based on the severity of the case:
+To train the models, I employed a modified cross-entropy loss function that applies per-example scalar weights. This allows the trainer to dynamically scale the loss based on the severity (described in next chapter) of the case:
 
 $$
 \mathcal{L}(\theta)=
@@ -199,7 +199,7 @@ Where:
 - $w$ is the per‑example scalar weight applied to specific classifications (described in next chapter)
 - $p_\theta(\cdot \mid x_{<t})$ is the model's next‑token distribution.
 
-### False-Negative Punishments
+### False-Positive Punishments
 
 In the context of safety guardrails, false positives (cases where the guardrail fails to detect a genuine policy violation) are much more dangerous than false negative (flagging benign content). To address this asymmetry, false positives were penalized more heavily during training. 
 
@@ -207,7 +207,7 @@ This was achieved by assigning an increased sample weight ($w=4.0$) to training 
 
 By multiplying the token-level loss by this weight, the model is aggressively penalized for missing violations. Consequently, the model is trained to prioritize recall and adopt a more conservative, "safer" classification behavior, reducing the likelihood of malicious queries slipping through.
 
-I was wondering which weight should be chosen to minimize false positives without degrading overall performance:
+I was wondering which weight value should be chosen to minimize false positive rate without degrading overall performance:
 ![f1_fp_per_weight2.png](imgs/f1_fp_per_weight2.png)
 
 ## PEFT - LoRA
@@ -229,7 +229,7 @@ Full‑Parameter Fine‑Tuning was attempted for the smallest model `HuggingFace
 100 epoch, with `batch_size=10` consumed 10GB of VRAM and took 5 hours.
 ![fft_training_evolution](imgs/fft_f1_by_epoch.png)
 
-However, the performance,.... as seen in the heatmap above.
+However, the performance never reached that observed with LoRA.
 
 ## General training stats
 
@@ -239,7 +239,7 @@ The following table provides a summary of the training resource consumption, com
 |----------------|-------|
 | LoRA Epochs    | 1     |
 | LoRA Rank      | 12    |
-| Negative Weight| 4     |
+| Negative Weight| 25     |
 | Batch Size     | 2     |
 | Learning Rate  | 2e-4  |
 
@@ -337,17 +337,25 @@ I was wondering whether a system prompt is necessary for a single-purpose classi
 30 epoch training run:
 ![f1_per_system_prompt](imgs/f1_per_system_prompt.png)
 
+SLM can learn its instruction and policies just from the training data.
+
 ## Similarity Score Cut-off effect
 
-The following charts show how the performance evaluation changed after applying a similarity score cut-off on the validation data.
+The following charts show how the performance evaluation changed after applying a similarity score cut-off on the validation data. It is expected that performance will decrease as the model becomes more accurate on evaluation data that is very similar to the test data.
 
 ![prompt_redact_f1_vs_epoch_filtered.png](imgs/prompt_redact_f1_vs_epoch_filtered.png)
 
-To improve model accuracy back to its previous level, an improved data synthesis algorithm was used to expand the training dataset from 2,000 to 5,500 samples, while also incorporating the similarity cut-off.
+To improve model accuracy back to its previous level, an improved data synthesis algorithm was used to expand the training dataset from 2,000 to 5,500 samples, while also incorporating the similarity cut-off. It clearly slows that more training data improves the accuracy.
 
 ![prompt_redact_f1_vs_epoch_filtered_expanded.png](imgs/prompt_redact_f1_vs_epoch_filtered_expanded.png)
 
-## Robustness for Noise
+## Effect of Dataset Size on Performance
+
+```
+TBD
+```
+
+## Robustness to Noise
 
 A comparison of the fine-tuned `HuggingFaceTB/SmolLM2-135M-Instruct` model trained on clean data shows that performance degrades significantly as noise increases in the input data.
 
@@ -369,7 +377,7 @@ Lastly, the chart below shows performance differences when larger models were al
 
 SmolLM2 models are English-first, so when we feed them German, we are basically testing how far their pretraining generalization and token overlap can carry them.
 
-I was wondering what would be their performance in differt languages and if any solution is needed to compensate.
+I was wondering what their performance would be in different languages and whether any solution is needed to compensate.
 
 I used the `google-t5/t5-3b` model to translate the test data from English into German, French, and Romanian. The smallest model showed a performance drop of around 20–30%, while larger models exhibited progressively smaller degradation in performance.
 
@@ -390,6 +398,10 @@ Which improved the performance drastically, back to 95%+ F1 zone:
 Using the default English LoRA adapter, I additionally introduce a translation model that converts user queries into English first. This approach requires running two models in parallel, but it has a significant advantage: it can be applied universally across all guardrails, eliminating the need to train separate adapters for each language.
 
 The key question is how translation might affect the original meaning of the user’s queries.
+
+```
+Run in progress...
+```
 
 # Lesson Learned
 
