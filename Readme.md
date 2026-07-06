@@ -312,7 +312,7 @@ The table below summarizes the VRAM requirements and inference speed of each mod
 ```
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-Run in progress: python main_local.py --gpu
+Fresh run with more epoch and larger dataset in progress: python main_local.py --gpu
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ```
@@ -332,16 +332,10 @@ Run in progress: python main_local.py --gpu
 
 ## Ommiting System Prompt
 
-I was wondering whether a system prompt is necessary for a single-purpose LoRA adapter, so I ran training and benchmarking under three setups: a full system prompt, a redacted system prompt, and no system prompt at all. The goal was to evaluate whether the system prompt could be simplified or removed to speed up inference.
+I was wondering whether a system prompt is necessary for a single-purpose classification LoRA adapter, so I ran training and benchmarking under three setups: a full system prompt, a redacted system prompt, and no system prompt at all. The goal was to evaluate whether the system prompt could be simplified or removed to speed up inference.
 
 30 epoch training run:
-```
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-Run in progress: python System_prompt_check.py --gpu
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-```
+![f1_per_system_prompt](imgs/f1_per_system_prompt.png)
 
 ## Similarity Score Cut-off effect
 
