@@ -229,6 +229,8 @@ Full‑Parameter Fine‑Tuning was attempted for the smallest model `HuggingFace
 100 epoch, with `batch_size=10` consumed 10GB of VRAM and took 5 hours.
 ![fft_training_evolution](imgs/fft_f1_by_epoch.png)
 
+![fft_training_metrics](imgs/fft_training_metrics.png)
+
 However, the performance never reached that observed with LoRA.
 
 ## General training stats
@@ -309,24 +311,20 @@ The table below summarizes the VRAM requirements and inference speed of each mod
 - *Note2: DeepSeek did not fully followed prompt and did not produced expected response*
 
 ## Preliminary results:
-```
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-Fresh run with more epoch and larger dataset in progress: python main_local.py --gpu
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-```
-| Model                               |   Base     |   LoRA | FP |
-|:------------------------------------|-----------:|-------:|---:|
-| HuggingFaceTB/SmolLM2-1.7B-Instruct |      66.67 |  99.44 |  1 |
-| HuggingFaceTB/SmolLM2-135M-Instruct |       0    |  98.58 |  6 |
-| HuggingFaceTB/SmolLM2-360M-Instruct |       7.16 |  99.44 |  1 |
-| Qwen/Qwen2.5-0.5B-Instruct          |      67.81 |  99.44 |  2 |
-| Qwen/Qwen2.5-1.5B-Instruct          |      92.22 |  99.3  |  0 |
-| google/gemma-3-1b-it                |      93.03 |  99.3  |  5 |
-| google/gemma-3-270m-it              |      66.35 |  98.61 |  0 |
-| meta-llama/Llama-3.2-1B-Instruct    |      17.02 |  99.44 |  0 |
-| meta-llama/Llama-3.2-3B-Instruct    |      95.44 |  99.72 |  0 |
+
+
+| Model                               | Base F1 (%) | LoRA F1 (%) | LoRA FP |
+| :---------------------------------- | ----------: | ----------: | ------: |
+| meta-llama/Llama-3.2-1B-Instruct    |       46.63 |       99.50 |       2 |
+| meta-llama/Llama-3.2-3B-Instruct    |       77.82 |       99.18 |       7 |
+| Qwen/Qwen2.5-0.5B-Instruct          |       67.26 |       99.10 |      10 |
+| Qwen/Qwen2.5-1.5B-Instruct          |       72.43 |       99.25 |       3 |
+| HuggingFaceTB/SmolLM2-1.7B-Instruct |       33.46 |       99.83 |       2 |
+| HuggingFaceTB/SmolLM2-360M-Instruct |        5.52 |       99.26 |       4 |
+| HuggingFaceTB/SmolLM2-135M-Instruct |        0.00 |       99.17 |       5 |
+| google/gemma-3-270m-it              |       52.40 |       98.68 |      11 |
+| google/gemma-3-1b-it                |       62.20 |       99.26 |       5 |
+
 
 ![lora_vs_baseline_f1_permodel](imgs/lora_vs_baseline_f1_permodel.png)
 
