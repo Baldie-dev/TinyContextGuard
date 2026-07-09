@@ -349,9 +349,9 @@ To improve model accuracy back to its previous level, an improved data synthesis
 
 ## Effect of Dataset Size on Performance
 
-```
-TBD
-```
+`HuggingFaceTB/SmolLM2-135M-Instruct`
+
+![f1_vs_dataset_size](imgs/f1_vs_dataset_size.png)
 
 ## Robustness to Noise
 
